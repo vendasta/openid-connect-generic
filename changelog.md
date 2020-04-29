@@ -1,6 +1,11 @@
 
 # OpenId Connect Generic Changelog
 
+**3.6.0**
+
+* Forked version 3.5.0 to Vendasta org
+* Update the access token when it is refreshed
+
 **3.4.1**
 
 * Minor documentation update and additional error checking.

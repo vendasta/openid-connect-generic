@@ -45,7 +45,7 @@ Notes
 
 class OpenID_Connect_Generic {
 	// plugin version
-	const VERSION = '3.6.0';
+	const VERSION = '3.6.1';
 
 	// plugin settings
 	private $settings;

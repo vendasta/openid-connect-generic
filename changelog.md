@@ -1,6 +1,10 @@
 
 # OpenId Connect Generic Changelog
 
+**3.6.1**
+
+* Updated the username so it doesn't remove all special characters.
+
 **3.6.0**
 
 * Forked version 3.5.0 to Vendasta org

@@ -50,6 +50,11 @@ On the settings page for this plugin (Dashboard > Settings > OpenID Connect Gene
 
 == Changelog ==
 
+= 3.6.1 =
+
+* Updated the username so it doesn't remove all special characters.
+
+
 = 3.6.0 =
 
 * Update the access token when it is refreshed.

@@ -1,6 +1,10 @@
 
 # OpenId Connect Generic Changelog
 
+**3.6.2**
+
+* Limited access to only partners, sales people, and admin.
+
 **3.6.1**
 
 * Updated the username so it doesn't remove all special characters.

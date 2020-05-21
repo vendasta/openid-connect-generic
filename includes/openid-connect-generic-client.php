@@ -407,6 +407,12 @@ class OpenID_Connect_Generic_Client {
 
 		// allow for other plugins to alter the login success
 		$login_user = apply_filters( 'openid-connect-generic-user-login-test', true, $user_claim );
+
+        // make sure they should have access
+		$roles = $user_claim['roles'];
+		if (!in_array('developer', $roles) and !in_array('partner', $roles) and !in_array('sales_person', $roles)) {
+		    return new WP_Error( 'unauthorized', __( 'Unauthorized access' ), $login_user );
+		}
 		
 		if ( ! $login_user ) {
 			return new WP_Error( 'unauthorized', __( 'Unauthorized access' ), $login_user );

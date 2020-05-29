@@ -133,6 +133,10 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$refresh_token = $refresh_token_info[ 'refresh_token' ];
 		$refresh_expires = $refresh_token_info[ 'refresh_expires' ];
 
+        $refresh_token_string = implode(",", $refresh_token);
+		$this->logger->log("Refresh Token is: {$refresh_token_string}");
+		$this->logger->log("Refresh Expires: {$refresh_expires}");
+
 		if ( ! $refresh_token || ( $refresh_expires && $current_time > $refresh_expires ) ) {
 			wp_logout();
 
@@ -472,7 +476,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			'refresh_token' => isset( $token_response[ 'refresh_token' ] ) ? $token_response[ 'refresh_token' ] : false,
 			'refresh_expires' => false,
 		);
-		$this->logger->log("Token response: {$token_response}");
+		$token_string = implode(",", $token_response);
+		$this->logger->log("Token response: {$token_string}");
 		if ( isset( $token_response[ 'refresh_expires_in' ] ) ) {
 			$refresh_expires_in = $token_response[ 'refresh_expires_in' ];
 			//if ($this->settings->enable_session_timeout) {

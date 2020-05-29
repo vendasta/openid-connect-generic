@@ -426,12 +426,12 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	function save_user_meta($id, $token_response, $id_token_claim, $user_claim){
         update_user_meta( $id, 'openid-connect-generic-last-token-response', $token_response );
         // TODO: should always update these, but all we need right now is the response.
-        if (isset($id_token_claim)) {
+       // if (isset($id_token_claim)) {
             update_user_meta($id, 'openid-connect-generic-last-id-token-claim', $id_token_claim);
-        }
-        if (isset($user_claim)) {
+        //}
+        //if (isset($user_claim)) {
             update_user_meta($id, 'openid-connect-generic-last-user-claim', $user_claim);
-        }
+        //}
     }
 
 	/**
@@ -474,11 +474,14 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		);
 		if ( isset( $token_response[ 'refresh_expires_in' ] ) ) {
 			$refresh_expires_in = $token_response[ 'refresh_expires_in' ];
-			if ($refresh_expires_in > 0) {
-				// leave enough time for the actual refresh request to go through
-				$refresh_expires = $now + $refresh_expires_in - 5;
-				$session[$this->cookie_token_refresh_key]['refresh_expires'] = $refresh_expires;
-			}
+			//if ($this->settings->enable_session_timeout) {
+                if ($refresh_expires_in > 0) {
+                    // leave enough time for the actual refresh request to go through
+                    $refresh_expires = $now + $refresh_expires_in - 5;
+                    $this->logger->log( "Set refresh token: {$refresh_expires} ; expires in: ({$refresh_expires_in})", 'expires-token' );
+                    //$session[$this->cookie_token_refresh_key]['refresh_expires'] = $refresh_expires;
+                }
+			//}
 		}
 		$manager->update($token, $session);
 		return;
@@ -590,7 +593,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 				$string .= substr( $format, $i, $match[ 1 ] - $i );
 				if ( ! isset( $user_claim[ $key ] ) ) {
 					if ( $error_on_missing_key ) {
-						return new WP_Error( 'incomplete-user-claim', __( 'User claim incomplete' ), $user_claim );
+						return new WP_Error( 'incomplete-user-claim', __( 'User claim incomplete'. $format ), $user_claim );
 					}
 				} else {
 					$string .= $user_claim[ $key ];

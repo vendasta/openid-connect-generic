@@ -49,6 +49,9 @@ On the settings page for this plugin (Dashboard > Settings > OpenID Connect Gene
 
 
 == Changelog ==
+= 3.6.2 =
+
+* Added optional setting. When token expires, don't expire the session. Refresh the token, and leave user logged in.
 
 = 3.6.1 =
 

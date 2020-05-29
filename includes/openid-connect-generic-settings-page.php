@@ -179,6 +179,12 @@ class OpenID_Connect_Generic_Settings_Page {
 				'type'        => 'checkbox',
 				'section'     => 'user_settings',
 			),
+			'enable_session_timeout'   => array(
+            				'title'       => __( 'Set the users session to the auth token time.' ),
+            				'description' => __( 'If this is set, then the session will be set based on the token session. The user will have to log back in, when the token times out.' ),
+            				'type'        => 'checkbox',
+            				'section'     => 'user_settings',
+            			),
 			'enable_logging'    => array(
 				'title'       => __( 'Enable Logging' ),
 				'description' => __( 'Very simple log messages for debugging purposes.' ),

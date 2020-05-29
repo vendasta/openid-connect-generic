@@ -472,6 +472,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			'refresh_token' => isset( $token_response[ 'refresh_token' ] ) ? $token_response[ 'refresh_token' ] : false,
 			'refresh_expires' => false,
 		);
+		$this->logger->log("Token response: {$token_response}");
 		if ( isset( $token_response[ 'refresh_expires_in' ] ) ) {
 			$refresh_expires_in = $token_response[ 'refresh_expires_in' ];
 			//if ($this->settings->enable_session_timeout) {

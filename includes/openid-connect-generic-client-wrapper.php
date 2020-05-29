@@ -123,6 +123,9 @@ class OpenID_Connect_Generic_Client_Wrapper {
 
 		$current_time = current_time( 'timestamp', true );
 		$refresh_token_info = $session[ $this->cookie_token_refresh_key ];
+		$this->logger->log("Refresh Token info: {$refresh_token_info}");
+		$refresh_token_info_string = implode(",", $refresh_token_info);
+		$this->logger->log("Refresh Token info string: {$refresh_token_info_string}");
 
 		$next_access_token_refresh_time = $refresh_token_info[ 'next_access_token_refresh_time' ];
 
@@ -134,7 +137,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$refresh_expires = $refresh_token_info[ 'refresh_expires' ];
 
         $refresh_token_string = implode(",", $refresh_token);
-		$this->logger->log("Refresh Token is: {$refresh_token_string}");
+        $this->logger->log("Refresh Token is: {$refresh_token}");
+		$this->logger->log("Refresh Token string is: {$refresh_token_string}");
 		$this->logger->log("Refresh Expires: {$refresh_expires}");
 
 		if ( ! $refresh_token || ( $refresh_expires && $current_time > $refresh_expires ) ) {
@@ -476,10 +480,11 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			'refresh_token' => isset( $token_response[ 'refresh_token' ] ) ? $token_response[ 'refresh_token' ] : false,
 			'refresh_expires' => false,
 		);
-		$token_string = implode(",", $token_response);
+		$token_string = json_encode($token_response);
 		$this->logger->log("Token response: {$token_string}");
 		if ( isset( $token_response[ 'refresh_expires_in' ] ) ) {
 			$refresh_expires_in = $token_response[ 'refresh_expires_in' ];
+			$this->logger->log("Refresh expires in:: {$refresh_expires_in}");
 			//if ($this->settings->enable_session_timeout) {
                 if ($refresh_expires_in > 0) {
                     // leave enough time for the actual refresh request to go through

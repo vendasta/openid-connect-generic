@@ -474,13 +474,12 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	 */
 	function save_refresh_token( $manager, $token, $token_response ) {
 		$session = $manager->get($token);
+		$refresh_token = false;
 		if (isset($session[$this->cookie_token_refresh_key])) {
 		    $refresh_token_info = $session[$this->cookie_token_refresh_key];
 		    $refresh_token = isset($refresh_token_info['refresh_token']) ? $refresh_token_info['refresh_token'] : false;
 		}
-		else {
-		    $refresh_token = false;
-		}
+
 		$now = current_time( 'timestamp' , true );
 		$session[$this->cookie_token_refresh_key] = array(
 			'next_access_token_refresh_time' => $token_response['expires_in'] + $now,

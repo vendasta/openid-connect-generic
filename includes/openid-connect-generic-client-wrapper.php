@@ -124,7 +124,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$current_time = current_time( 'timestamp', true );
 		$refresh_token_info = $session[ $this->cookie_token_refresh_key ];
 		$this->logger->log("Refresh Token info: {$refresh_token_info}");
-		$refresh_token_info_string = implode(",", $refresh_token_info);
+		$refresh_token_info_string = json_encode($refresh_token_info);
 		$this->logger->log("Refresh Token info string: {$refresh_token_info_string}");
 
 		$next_access_token_refresh_time = $refresh_token_info[ 'next_access_token_refresh_time' ];
@@ -458,7 +458,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$token = $manager->create( $expiration );
 
 		// Save the refresh token in the session
-		$this->save_refresh_token( $manager, $token, $token_response );
+		//$this->save_refresh_token( $manager, $token, $token_response );
 
 		// you did great, have a cookie!
 		wp_set_auth_cookie( $user->ID, false, '', $token);

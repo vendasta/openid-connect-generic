@@ -434,12 +434,12 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	function save_user_meta($id, $token_response, $id_token_claim, $user_claim){
         update_user_meta( $id, 'openid-connect-generic-last-token-response', $token_response );
         // TODO: should always update these, but all we need right now is the response.
-       // if (isset($id_token_claim)) {
+        if (isset($id_token_claim)) {
             update_user_meta($id, 'openid-connect-generic-last-id-token-claim', $id_token_claim);
-        //}
-        //if (isset($user_claim)) {
+        }
+        if (isset($user_claim)) {
             update_user_meta($id, 'openid-connect-generic-last-user-claim', $user_claim);
-        //}
+        }
     }
 
 	/**
@@ -474,6 +474,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	 */
 	function save_refresh_token( $manager, $token, $token_response ) {
 		$session = $manager->get($token);
+
+		// don't override a refresh token with false
 		$refresh_token = false;
 		if (isset($session[$this->cookie_token_refresh_key])) {
 		    $refresh_token_info = $session[$this->cookie_token_refresh_key];
@@ -495,8 +497,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
                 if ($refresh_expires_in > 0) {
                     // leave enough time for the actual refresh request to go through
                     $refresh_expires = $now + $refresh_expires_in - 5;
-                    $this->logger->log( "Set refresh token: {$refresh_expires} ; expires in: ({$refresh_expires_in})", 'expires-token' );
-                    //$session[$this->cookie_token_refresh_key]['refresh_expires'] = $refresh_expires;
+                  //  $this->logger->log( "Set refresh token: {$refresh_expires} ; expires in: ({$refresh_expires_in})", 'expires-token' );
+                    $session[$this->cookie_token_refresh_key]['refresh_expires'] = $refresh_expires;
                 }
 			//}
 		}

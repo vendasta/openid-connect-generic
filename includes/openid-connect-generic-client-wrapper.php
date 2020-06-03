@@ -111,6 +111,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			return;
 		}
 
+        $this->logger->log("Ensure token still fresh, logged in.");
 		$user_id = wp_get_current_user()->ID;
 		$manager = WP_Session_Tokens::get_instance( $user_id );
 		$token = wp_get_session_token();
@@ -458,7 +459,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$token = $manager->create( $expiration );
 
 		// Save the refresh token in the session
-		//$this->save_refresh_token( $manager, $token, $token_response );
+		$this->save_refresh_token( $manager, $token, $token_response );
 
 		// you did great, have a cookie!
 		wp_set_auth_cookie( $user->ID, false, '', $token);
@@ -479,7 +480,9 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$refresh_token = false;
 		if (isset($session[$this->cookie_token_refresh_key])) {
 		    $refresh_token_info = $session[$this->cookie_token_refresh_key];
-		    $refresh_token = isset($refresh_token_info['refresh_token']) ? $refresh_token_info['refresh_token'] : false;
+		    if (isset($refresh_token_info['refresh_token']) && $refresh_token_info['refresh_token'] != false ) {
+		        $refresh_token = $refresh_token_info['refresh_token'];
+		    }
 		}
 
 		$now = current_time( 'timestamp' , true );

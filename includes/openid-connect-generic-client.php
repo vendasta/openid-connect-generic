@@ -409,7 +409,14 @@ class OpenID_Connect_Generic_Client {
 		$login_user = apply_filters( 'openid-connect-generic-user-login-test', true, $user_claim );
 		
 		if ( ! $login_user ) {
-			return new WP_Error( 'unauthorized', __( 'Unauthorized access' ), $login_user );
+		    if (isset($user_claim['email'])) {
+			    return new WP_Error( 'unauthorized', __( 'Unauthorized access for ' . $user_claim['email'] ), $login_user, $user_claim );
+			}
+			else {
+			    $new_error = new WP_Error( 'unauthorized', __( 'Unauthorized access' ), $login_user );
+			    $new_error->error_data[400] = $user_claim;
+			    return $new_error;
+			}
 		}
 		
 		return true;

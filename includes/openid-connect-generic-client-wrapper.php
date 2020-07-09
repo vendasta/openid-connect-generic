@@ -126,14 +126,14 @@ class OpenID_Connect_Generic_Client_Wrapper {
 
 		$next_access_token_refresh_time = $refresh_token_info[ 'next_access_token_refresh_time' ];
 
-		if ( $current_time < $next_access_token_refresh_time ) {
-			return;
-		}
+		//if ( $current_time < $next_access_token_refresh_time ) {
+		//	return;
+		//}
 
 		$refresh_token = $refresh_token_info[ 'refresh_token' ];
 		$refresh_expires = $refresh_token_info[ 'refresh_expires' ];
 
-		if ( ! $refresh_token || ( $refresh_expires && $current_time > $refresh_expires ) ) {
+		//if ( ! $refresh_token || ( $refresh_expires && $current_time > $refresh_expires ) ) {
 			wp_logout();
 
 			if ( $this->settings->redirect_on_logout ) {
@@ -143,7 +143,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			}
 
 			return;
-		}
+		//}
 
 		$token_result = $this->client->request_new_tokens( $refresh_token );
 		

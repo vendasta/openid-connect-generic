@@ -137,6 +137,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			wp_logout();
 
 			if ( $this->settings->redirect_on_logout ) {
+			    $current_url = get_permalink(get_the_ID());
+                $this->logger->log("The current URL: {$current_url}");
 				$this->error_redirect( new WP_Error( 'access-token-expired', __( 'Session expired. Please login again.' ) ) );
 			}
 
@@ -174,7 +176,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		wp_redirect(  
 			wp_login_url() . 
 			'?login-error=' . $error->get_error_code() .
-		    '&message=' . urlencode( $error->get_error_message() )
+		    '&message=' . urlencode( $error->get_error_message() .
+		    '&redirect_to=' . 'https://academy.conquerlocal.com/community/')
 		);
 		exit;
 	}

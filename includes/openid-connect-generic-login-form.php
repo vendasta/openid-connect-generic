@@ -65,7 +65,7 @@ class OpenID_Connect_Generic_Login_Form {
 		if ( $GLOBALS['pagenow'] == 'wp-login.php' && isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] === 'logout' ) {
 			return;
 		}
-        $this->logger->log("Handle Redirect Cookie");
+        //$this->logger->log("Handle Redirect Cookie");
 		// record the URL of this page if set to redirect back to origin page
 		if ( $this->settings->redirect_user_back )
 		{
@@ -77,15 +77,15 @@ class OpenID_Connect_Generic_Login_Form {
 			if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
 				// if using the login form, default redirect to the admin dashboard
 				$redirect_url = admin_url();
-                $this->logger->log("redirect page now");
+                //$this->logger->log("redirect page now");
 				if ( isset( $_REQUEST['redirect_to'] ) ) {
 					$redirect_url = esc_url( $_REQUEST[ 'redirect_to' ] );
-					$this->logger->log("Redirect URL: {$redirect_url}");
+					//$this->logger->log("Redirect URL: {$redirect_url}");
 				}
 			}
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
-            $this->logger->log("outside URL: {$redirect_url}");
+            //$this->logger->log("outside URL: {$redirect_url}");
 			setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 		}
 	}

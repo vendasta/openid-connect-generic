@@ -177,7 +177,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			wp_login_url() . 
 			'?login-error=' . $error->get_error_code() .
 		    '&message=' . urlencode( $error->get_error_message()) .
-		    '&redirect_to=' . urlencode('https://academy.conquerlocal.com/community/')
+		    '&redirect_to=' . urlencode('https://learndashtest.websitepro.hosting/contact/')
 		);
 		exit;
 	}

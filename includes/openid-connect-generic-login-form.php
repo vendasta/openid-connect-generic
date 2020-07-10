@@ -4,14 +4,16 @@ class OpenID_Connect_Generic_Login_Form {
 
 	private $settings;
 	private $client_wrapper;
+	private $logger;
 
 	/**
 	 * @param $settings
 	 * @param $client_wrapper
 	 */
-	function __construct( $settings, $client_wrapper ){
+	function __construct( $settings, $client_wrapper, $logger ){
 		$this->settings = $settings;
 		$this->client_wrapper = $client_wrapper;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -20,8 +22,8 @@ class OpenID_Connect_Generic_Login_Form {
 	 *
 	 * @return \OpenID_Connect_Generic_Login_Form
 	 */
-	static public function register( $settings, $client_wrapper ){
-		$login_form = new self( $settings, $client_wrapper );
+	static public function register( $settings, $client_wrapper, $logger ){
+		$login_form = new self( $settings, $client_wrapper, $logger );
 
 		// alter the login form as dictated by settings
 		add_filter( 'login_message', array( $login_form, 'handle_login_page' ), 99 );
@@ -63,7 +65,7 @@ class OpenID_Connect_Generic_Login_Form {
 		if ( $GLOBALS['pagenow'] == 'wp-login.php' && isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] === 'logout' ) {
 			return;
 		}
-
+        $this->logger->log("Handle Redirect Cookie");
 		// record the URL of this page if set to redirect back to origin page
 		if ( $this->settings->redirect_user_back )
 		{
@@ -75,14 +77,15 @@ class OpenID_Connect_Generic_Login_Form {
 			if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
 				// if using the login form, default redirect to the admin dashboard
 				$redirect_url = admin_url();
-
+                $this->logger->log("redirect page now");
 				if ( isset( $_REQUEST['redirect_to'] ) ) {
 					$redirect_url = esc_url( $_REQUEST[ 'redirect_to' ] );
+					$this->logger->log("Redirect URL: {$redirect_url}");
 				}
 			}
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
-
+            $this->logger->log("outside URL: {$redirect_url}");
 			setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 		}
 	}
@@ -94,7 +97,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function handle_login_page( $message ) {
-
+        $this->logger->log("Handle login page");
 		if ( isset( $_GET['login-error'] ) ) {
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
 		}
@@ -129,6 +132,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function make_login_button() {
+	    $this->logger->log("Make login button");
 		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login' ) );
 		$href = $this->client_wrapper->get_authentication_url();
 

@@ -392,6 +392,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		sleep(3);
 		$redirect_url = isset( $_COOKIE[ $this->cookie_redirect_key ] ) ? esc_url( $_COOKIE[ $this->cookie_redirect_key ] ) : false;
 		$this->logger->log("Going to redirect to this URL: {$redirect_url}");
+		$this->logger->log("Going to redirect to this cookie: {$_COOKIE[ $this->cookie_redirect_key ]}");
 
 		if( $this->settings->redirect_user_back && !empty( $redirect_url ) ) {
 			do_action( 'openid-connect-generic-redirect-user-back', $redirect_url, $user );

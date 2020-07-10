@@ -390,14 +390,17 @@ class OpenID_Connect_Generic_Client_Wrapper {
 
 		// redirect back to the origin page if enabled
 		$redirect_url = isset( $_COOKIE[ $this->cookie_redirect_key ] ) ? esc_url( $_COOKIE[ $this->cookie_redirect_key ] ) : false;
+		$this->logger->log("Going to redirect to this URL: {$redirect_url}");
 
 		if( $this->settings->redirect_user_back && !empty( $redirect_url ) ) {
 			do_action( 'openid-connect-generic-redirect-user-back', $redirect_url, $user );
 			setcookie( $this->cookie_redirect_key, $redirect_url, 1, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
+			$this->logger->log("The setting is set.");
 			wp_redirect( $redirect_url );
 		}
 		// otherwise, go home!
 		else {
+		    $this->logger->log("Redirecting home");
 			wp_redirect( home_url() );
 		}
 		

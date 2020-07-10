@@ -129,7 +129,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function make_login_button() {
-		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login with OpenID Connect' ) );
+		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login' ) );
 		$href = $this->client_wrapper->get_authentication_url();
 
 		// maybe set redirect cookie on formular page

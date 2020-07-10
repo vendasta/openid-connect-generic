@@ -126,14 +126,14 @@ class OpenID_Connect_Generic_Client_Wrapper {
 
 		$next_access_token_refresh_time = $refresh_token_info[ 'next_access_token_refresh_time' ];
 
-		//if ( $current_time < $next_access_token_refresh_time ) {
-		//	return;
-		//}
+		if ( $current_time < $next_access_token_refresh_time ) {
+			return;
+		}
 
 		$refresh_token = $refresh_token_info[ 'refresh_token' ];
 		$refresh_expires = $refresh_token_info[ 'refresh_expires' ];
 
-		//if ( ! $refresh_token || ( $refresh_expires && $current_time > $refresh_expires ) ) {
+		if ( ! $refresh_token || ( $refresh_expires && $current_time > $refresh_expires ) ) {
 			wp_logout();
 
 			if ( $this->settings->redirect_on_logout ) {
@@ -143,7 +143,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			}
 
 			return;
-		//}
+		}
 
 		$token_result = $this->client->request_new_tokens( $refresh_token );
 		
@@ -176,8 +176,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		wp_redirect(  
 			wp_login_url() . 
 			'?login-error=' . $error->get_error_code() .
-		    '&message=' . urlencode( $error->get_error_message() .
-		    '&redirect_to=' . 'https://academy.conquerlocal.com/community/')
+		    '&message=' . urlencode( $error->get_error_message()) .
+		    '&redirect_to=' . urlencode('https://academy.conquerlocal.com/community/')
 		);
 		exit;
 	}

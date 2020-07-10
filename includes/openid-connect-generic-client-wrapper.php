@@ -389,7 +389,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$this->logger->log( "Successful login for: {$user->user_login} ({$user->ID})", 'login-success' );
 
 		// redirect back to the origin page if enabled
-		sleep(10);
+		sleep(3);
 		$redirect_url = isset( $_COOKIE[ $this->cookie_redirect_key ] ) ? esc_url( $_COOKIE[ $this->cookie_redirect_key ] ) : false;
 		$this->logger->log("Going to redirect to this URL: {$redirect_url}");
 

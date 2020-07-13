@@ -100,8 +100,9 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	function handle_login_page( $message ) {
         $this->logger->log("Handle login page");
-        add_action( 'init', array( $this, 'handle_redirect_cookie' ), 99 );
+
 		if ( isset( $_GET['login-error'] ) ) {
+		    add_action( 'init', array( $this, 'handle_redirect_cookie' ), 99 );
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
 		}
 

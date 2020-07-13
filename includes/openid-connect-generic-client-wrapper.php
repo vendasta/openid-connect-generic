@@ -175,8 +175,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		wp_redirect(  
 			wp_login_url() . 
 			'?login-error=' . $error->get_error_code() .
-		    '&message=' . urlencode( $error->get_error_message()) .
-		    '&redirect_to=' . urlencode($current_url)
+		    '&message=' . urlencode( $error->get_error_message())
+		    //'&redirect_to=' . urlencode($current_url)
 		);
 		exit;
 	}

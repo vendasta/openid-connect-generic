@@ -48,9 +48,6 @@ class OpenID_Connect_Generic_Login_Form {
 			&& ! isset( $_POST['wp-submit'] ) )
 		{
 			if (  ! isset( $_GET['login-error'] ) ) {
-// 			    ob_start();
-// 			    $this->handle_redirect_cookie();
-// 			    ob_end_flush();
 				wp_redirect( $this->client_wrapper->get_authentication_url() );
 				exit;
 			}
@@ -100,9 +97,9 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	function handle_login_page( $message ) {
         $this->logger->log("Handle login page");
+        add_action( 'init', array( $this, 'handle_redirect_cookie' ) );
 
 		if ( isset( $_GET['login-error'] ) ) {
-		   // add_action( 'init', array( $this, 'handle_redirect_cookie' ) );
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
 		}
 

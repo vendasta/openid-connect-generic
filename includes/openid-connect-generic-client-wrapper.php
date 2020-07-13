@@ -388,7 +388,6 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$this->logger->log( "Successful login for: {$user->user_login} ({$user->ID})", 'login-success' );
 
 		// redirect back to the origin page if enabled
-		sleep(3);
 		$redirect_url = isset( $_COOKIE[ $this->cookie_redirect_key ] ) ? esc_url( $_COOKIE[ $this->cookie_redirect_key ] ) : false;
 		$this->logger->log("Going to redirect to this URL: {$redirect_url}");
 		$this->logger->log("Going to redirect to this cookie: {$_COOKIE[ $this->cookie_redirect_key ]}");
@@ -396,7 +395,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		if( $this->settings->redirect_user_back && !empty( $redirect_url ) ) {
 			do_action( 'openid-connect-generic-redirect-user-back', $redirect_url, $user );
 			setcookie( $this->cookie_redirect_key, $redirect_url, 1, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
-			$this->logger->log("The setting is set.");
+			//$this->logger->log("The setting is set.");
 			wp_redirect( $redirect_url );
 		}
 		// otherwise, go home!
@@ -475,7 +474,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$session = $manager->get($token);
 		$now = current_time( 'timestamp' , true );
 		$session[$this->cookie_token_refresh_key] = array(
-			'next_access_token_refresh_time' => 10 + $now,
+			'next_access_token_refresh_time' => $token_response['expires_in'] + $now,
 			'refresh_token' => isset( $token_response[ 'refresh_token' ] ) ? $token_response[ 'refresh_token' ] : false,
 			'refresh_expires' => false,
 		);

@@ -23,9 +23,10 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return \OpenID_Connect_Generic_Login_Form
 	 */
 	static public function register( $settings, $client_wrapper, $logger ){
-		$login_form = new self( $settings, $client_wrapper, $logger );
 
-		add_action('init', 'handle_redirect_cookie');
+	    add_action('init', 'handle_redirect_cookie');
+
+		$login_form = new self( $settings, $client_wrapper, $logger );
 
 		// alter the login form as dictated by settings
 		add_filter( 'login_message', array( $login_form, 'handle_login_page' ), 99 );

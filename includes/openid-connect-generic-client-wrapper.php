@@ -169,14 +169,16 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	 */
 	function error_redirect( $error ) {
 		$current_url = home_url(add_query_arg(array(), $wp->request));
+		$current_url_2 = "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $this->logger->log("The current URL: {$current_url}");
+        $this->logger->log("The current URL 2: {$current_url_2}");
 		
 		// redirect user back to login page
 		wp_redirect(  
 			wp_login_url() . 
 			'?login-error=' . $error->get_error_code() .
-		    '&message=' . urlencode( $error->get_error_message())
-		    //'&redirect_to=' . urlencode($current_url)
+		    '&message=' . urlencode( $error->get_error_message()) .
+		    '&redirect_to=' . urlencode($current_url)
 		);
 		exit;
 	}

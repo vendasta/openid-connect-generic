@@ -83,13 +83,14 @@ class OpenID_Connect_Generic_Login_Form {
 					//$this->logger->log("Redirect URL: {$redirect_url}");
 				}
 			}
-            // ob_start function  ??? Use this  //todo figure out how to set cookies in function.
+            ob_start()
+
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
             //$this->logger->log("outside URL: {$redirect_url}");
 			$success = setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 			$this->logger->log("cookie is set {$success}");
 
-			// ob_end_clean function ??? Use this.
+			ob_end_clean()
 		}
 	}
 
@@ -139,17 +140,18 @@ class OpenID_Connect_Generic_Login_Form {
 		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login' ) );
 		$href = $this->client_wrapper->get_authentication_url();
 
-		ob_start();
+
 
 		// maybe set redirect cookie on formular page
 		$this->handle_redirect_cookie();
 
+        ob_start();
 		?>
 		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center; color: #3fb23f;">
 			<a class="button button-large" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
 		</div>
 		<?php
-		return ob_get_flush();
+		return ob_get_clean();
 	}
 
 	/*

@@ -168,10 +168,8 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	 * @param $error WP_Error
 	 */
 	function error_redirect( $error ) {
-		$current_url = home_url(add_query_arg(array(), $wp->request));
-		$current_url_2 = "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        $this->logger->log("The current URL: {$current_url}");
-        $this->logger->log("The current URL 2: {$current_url_2}");
+		$current_url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $this->logger->log("The current URL 2: {$current_url}");
 		
 		// redirect user back to login page
 		wp_redirect(  

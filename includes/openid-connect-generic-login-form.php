@@ -93,7 +93,6 @@ class OpenID_Connect_Generic_Login_Form {
             $this->logger->log("outside URL: {$redirect_url}");
 			$success = setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 			$this->logger->log("cookie is set {$success}");
-			$this->logger->log($_COOKIE[ $this->cookie_redirect_key ]);
 
 		}
 	}
@@ -107,9 +106,10 @@ class OpenID_Connect_Generic_Login_Form {
 	function handle_login_page( $message ) {
 	   // ob_start();
         $this->logger->log("Handle login page");
-        ob_start();
-        $this->handle_redirect_cookie();
-        ob_end_flush();
+//         ob_start();
+//         $this->handle_redirect_cookie();
+//         ob_end_flush();
+       // add_action('init', 'handle_redirect_cookie');
 		if ( isset( $_GET['login-error'] ) ) {
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
 		}

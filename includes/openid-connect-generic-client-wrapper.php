@@ -137,7 +137,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			wp_logout();
 
 			if ( $this->settings->redirect_on_logout ) {
-			    $current_url = get_permalink(get_the_ID());
+			    $current_url = get_permalink(get_queried_object_id());
                 $this->logger->log("The current URL: {$current_url}");
 				$this->error_redirect( new WP_Error( 'access-token-expired', __( 'Session expired. Please login again.' ) ) );
 			}

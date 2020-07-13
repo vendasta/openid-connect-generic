@@ -97,7 +97,6 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	function handle_login_page( $message ) {
         $this->logger->log("Handle login page");
-        add_action( 'init', array( $this, 'handle_redirect_cookie' ) );
 
 		if ( isset( $_GET['login-error'] ) ) {
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
@@ -139,8 +138,8 @@ class OpenID_Connect_Generic_Login_Form {
 
         ob_start();
 		?>
-		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center; color: #3fb23f;">
-			<a class="button button-large" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
+		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center;">
+			<a class="button button-large" style="color: #3fb23f;" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
 		</div>
 		<?php
 		return ob_get_clean();

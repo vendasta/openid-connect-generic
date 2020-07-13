@@ -25,6 +25,8 @@ class OpenID_Connect_Generic_Login_Form {
 	static public function register( $settings, $client_wrapper, $logger ){
 		$login_form = new self( $settings, $client_wrapper, $logger );
 
+		add_action('init', 'handle_redirect_cookie');
+
 		// alter the login form as dictated by settings
 		add_filter( 'login_message', array( $login_form, 'handle_login_page' ), 99 );
 
@@ -47,7 +49,7 @@ class OpenID_Connect_Generic_Login_Form {
 			&& ! isset( $_POST['wp-submit'] ) )
 		{
 			if (  ! isset( $_GET['login-error'] ) ) {
-			    $this->handle_redirect_cookie();
+			   // $this->handle_redirect_cookie();
 				wp_redirect( $this->client_wrapper->get_authentication_url() );
 				exit;
 			}
@@ -65,7 +67,7 @@ class OpenID_Connect_Generic_Login_Form {
 		if ( $GLOBALS['pagenow'] == 'wp-login.php' && isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] === 'logout' ) {
 			return;
 		}
-        //$this->logger->log("Handle Redirect Cookie");
+        $this->logger->log("Handle Redirect Cookie");
 		// record the URL of this page if set to redirect back to origin page
 		if ( $this->settings->redirect_user_back )
 		{
@@ -83,14 +85,12 @@ class OpenID_Connect_Generic_Login_Form {
 					//$this->logger->log("Redirect URL: {$redirect_url}");
 				}
 			}
-            ob_start()
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
             //$this->logger->log("outside URL: {$redirect_url}");
 			$success = setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 			$this->logger->log("cookie is set {$success}");
 
-			ob_end_clean()
 		}
 	}
 
@@ -143,7 +143,7 @@ class OpenID_Connect_Generic_Login_Form {
 
 
 		// maybe set redirect cookie on formular page
-		$this->handle_redirect_cookie();
+		//$this->handle_redirect_cookie();
 
         ob_start();
 		?>

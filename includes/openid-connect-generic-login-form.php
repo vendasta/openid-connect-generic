@@ -88,9 +88,10 @@ class OpenID_Connect_Generic_Login_Form {
 			}
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
-            //$this->logger->log("outside URL: {$redirect_url}");
+            $this->logger->log("outside URL: {$redirect_url}");
 			$success = setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 			$this->logger->log("cookie is set {$success}");
+			$this->logger->log($_COOKIE[ $this->cookie_redirect_key ]);
 
 		}
 	}
@@ -102,6 +103,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function handle_login_page( $message ) {
+	    ob_start();
         $this->logger->log("Handle login page");
         $this->handle_redirect_cookie();
 		if ( isset( $_GET['login-error'] ) ) {
@@ -110,6 +112,7 @@ class OpenID_Connect_Generic_Login_Form {
 
 		// login button is appended to existing messages in case of error
 		$message .= $this->make_login_button();
+		ob_end_clean();
 		return $message;
 	}
 
@@ -122,7 +125,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	function make_error_output( $error_code, $error_message ) {
 
-		ob_start();
+		//ob_start();
 		?>
 		<div id="login_error">
 			<strong><?php _e( 'ERROR'); ?>: </strong>
@@ -147,7 +150,7 @@ class OpenID_Connect_Generic_Login_Form {
 		// maybe set redirect cookie on formular page
 		//$this->handle_redirect_cookie();
 
-        ob_start();
+      //  ob_start();
 		?>
 		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center; color: #3fb23f;">
 			<a class="button button-large" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>

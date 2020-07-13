@@ -24,8 +24,6 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	static public function register( $settings, $client_wrapper, $logger ){
 
-	    //add_action('init', 'handle_redirect_cookie');
-
 		$login_form = new self( $settings, $client_wrapper, $logger );
 
 		// alter the login form as dictated by settings
@@ -50,9 +48,9 @@ class OpenID_Connect_Generic_Login_Form {
 			&& ! isset( $_POST['wp-submit'] ) )
 		{
 			if (  ! isset( $_GET['login-error'] ) ) {
-			    ob_start();
-			    $this->handle_redirect_cookie();
-			    ob_end_flush();
+// 			    ob_start();
+// 			    $this->handle_redirect_cookie();
+// 			    ob_end_flush();
 				wp_redirect( $this->client_wrapper->get_authentication_url() );
 				exit;
 			}
@@ -82,17 +80,14 @@ class OpenID_Connect_Generic_Login_Form {
 			if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
 				// if using the login form, default redirect to the admin dashboard
 				$redirect_url = admin_url();
-                //$this->logger->log("redirect page now");
 				if ( isset( $_REQUEST['redirect_to'] ) ) {
 					$redirect_url = esc_url( $_REQUEST[ 'redirect_to' ] );
-					//$this->logger->log("Redirect URL: {$redirect_url}");
 				}
 			}
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
             $this->logger->log("outside URL: {$redirect_url}");
 			$success = setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
-			$this->logger->log("cookie is set {$success}");
 
 		}
 	}
@@ -104,19 +99,13 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function handle_login_page( $message ) {
-	   // ob_start();
         $this->logger->log("Handle login page");
-//         ob_start();
-//         $this->handle_redirect_cookie();
-//         ob_end_flush();
-       // add_action('init', 'handle_redirect_cookie');
 		if ( isset( $_GET['login-error'] ) ) {
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
 		}
 
 		// login button is appended to existing messages in case of error
 		$message .= $this->make_login_button();
-		//ob_end_clean();
 		return $message;
 	}
 
@@ -148,11 +137,6 @@ class OpenID_Connect_Generic_Login_Form {
 	    $this->logger->log("Make login button");
 		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login' ) );
 		$href = $this->client_wrapper->get_authentication_url();
-
-
-
-		// maybe set redirect cookie on formular page
-		//$this->handle_redirect_cookie();
 
         ob_start();
 		?>

@@ -24,7 +24,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	static public function register( $settings, $client_wrapper, $logger ){
 
-	    add_action('init', 'handle_redirect_cookie');
+	    //add_action('init', 'handle_redirect_cookie');
 
 		$login_form = new self( $settings, $client_wrapper, $logger );
 
@@ -103,6 +103,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	function handle_login_page( $message ) {
         $this->logger->log("Handle login page");
+        $this->handle_redirect_cookie();
 		if ( isset( $_GET['login-error'] ) ) {
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
 		}

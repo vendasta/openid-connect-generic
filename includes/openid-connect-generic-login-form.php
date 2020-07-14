@@ -24,8 +24,6 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	static public function register( $settings, $client_wrapper, $logger ){
 
-	    $this->handle_redirect_cookie();
-
 		$login_form = new self( $settings, $client_wrapper, $logger );
 
 		// alter the login form as dictated by settings
@@ -33,6 +31,8 @@ class OpenID_Connect_Generic_Login_Form {
 
 		// add a shortcode for the login button
 		add_shortcode( 'openid_connect_generic_login_button', array( $login_form, 'make_login_button' ) );
+
+		$login_form->handle_redirect_cookie();
 
 		$login_form->handle_redirect_login_type_auto();
 

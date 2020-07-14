@@ -24,6 +24,8 @@ class OpenID_Connect_Generic_Login_Form {
 	 */
 	static public function register( $settings, $client_wrapper, $logger ){
 
+	    $this->handle_redirect_cookie();
+
 		$login_form = new self( $settings, $client_wrapper, $logger );
 
 		// alter the login form as dictated by settings

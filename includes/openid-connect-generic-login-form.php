@@ -67,7 +67,6 @@ class OpenID_Connect_Generic_Login_Form {
 		if ( $GLOBALS['pagenow'] == 'wp-login.php' && isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] === 'logout' ) {
 			return;
 		}
-        $this->logger->log("Handle Redirect Cookie");
 		// record the URL of this page if set to redirect back to origin page
 		if ( $this->settings->redirect_user_back )
 		{
@@ -85,8 +84,7 @@ class OpenID_Connect_Generic_Login_Form {
 			}
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
-            $this->logger->log("outside URL: {$redirect_url}");
-			$success = setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
+			setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 
 		}
 	}
@@ -98,7 +96,6 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function handle_login_page( $message ) {
-        $this->logger->log("Handle login page");
 
 		if ( isset( $_GET['login-error'] ) ) {
 			$message .= $this->make_error_output( $_GET['login-error'], $_GET['message'] );
@@ -134,7 +131,6 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function make_login_button() {
-	    $this->logger->log("Make login button");
 		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login' ) );
 		$href = $this->client_wrapper->get_authentication_url();
 

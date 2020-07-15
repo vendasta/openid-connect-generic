@@ -168,13 +168,14 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	 * @param $error WP_Error
 	 */
 	function error_redirect( $error ) {
-		$this->logger->log( $error );
-		
+		$current_url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
 		// redirect user back to login page
 		wp_redirect(  
 			wp_login_url() . 
 			'?login-error=' . $error->get_error_code() .
-		    '&message=' . urlencode( $error->get_error_message() )
+		    '&message=' . urlencode( $error->get_error_message()) .
+		    '&redirect_to=' . urlencode($current_url)
 		);
 		exit;
 	}

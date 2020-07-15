@@ -4,16 +4,14 @@ class OpenID_Connect_Generic_Login_Form {
 
 	private $settings;
 	private $client_wrapper;
-	private $logger;
 
 	/**
 	 * @param $settings
 	 * @param $client_wrapper
 	 */
-	function __construct( $settings, $client_wrapper, $logger ){
+	function __construct( $settings, $client_wrapper ){
 		$this->settings = $settings;
 		$this->client_wrapper = $client_wrapper;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -22,9 +20,9 @@ class OpenID_Connect_Generic_Login_Form {
 	 *
 	 * @return \OpenID_Connect_Generic_Login_Form
 	 */
-	static public function register( $settings, $client_wrapper, $logger ){
+	static public function register( $settings, $client_wrapper ){
 
-		$login_form = new self( $settings, $client_wrapper, $logger );
+		$login_form = new self( $settings, $client_wrapper );
 
 		// alter the login form as dictated by settings
 		add_filter( 'login_message', array( $login_form, 'handle_login_page' ), 99 );
@@ -131,13 +129,13 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function make_login_button() {
-		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login' ) );
+		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login with Vendasta Credentials' ) );
 		$href = $this->client_wrapper->get_authentication_url();
 
         ob_start();
 		?>
 		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center;">
-			<a class="button button-large" style="color: #3fb23f;" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
+			<a class="button button-large" style="color: #3f9b63; border-color: #3f9b63;" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
 		</div>
 		<?php
 		return ob_get_clean();

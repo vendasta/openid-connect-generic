@@ -4,16 +4,14 @@ class OpenID_Connect_Generic_Login_Form {
 
 	private $settings;
 	private $client_wrapper;
-	private $logger;
 
 	/**
 	 * @param $settings
 	 * @param $client_wrapper
 	 */
-	function __construct( $settings, $client_wrapper, $logger ){
+	function __construct( $settings, $client_wrapper ){
 		$this->settings = $settings;
 		$this->client_wrapper = $client_wrapper;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -22,9 +20,9 @@ class OpenID_Connect_Generic_Login_Form {
 	 *
 	 * @return \OpenID_Connect_Generic_Login_Form
 	 */
-	static public function register( $settings, $client_wrapper, $logger ){
+	static public function register( $settings, $client_wrapper ){
 
-		$login_form = new self( $settings, $client_wrapper, $logger );
+		$login_form = new self( $settings, $client_wrapper );
 
 		// alter the login form as dictated by settings
 		add_filter( 'login_message', array( $login_form, 'handle_login_page' ), 99 );

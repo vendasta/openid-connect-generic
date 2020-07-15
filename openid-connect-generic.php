@@ -105,7 +105,7 @@ class OpenID_Connect_Generic {
 			return;
 		}
 
-		$this->login_form = OpenID_Connect_Generic_Login_Form::register( $this->settings, $this->client_wrapper, $this->logger );
+		$this->login_form = OpenID_Connect_Generic_Login_Form::register( $this->settings, $this->client_wrapper );
 
 		// add a shortcode to get the auth url
 		add_shortcode( 'openid_connect_generic_auth_url', array( $this->client_wrapper, 'get_authentication_url' ) );

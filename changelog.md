@@ -1,5 +1,9 @@
 
 # OpenId Connect Generic Changelog
+**3.6.3**
+
+* Fixed deep linking after encountering error screen.
+* Changed text for Login button on error screen.
 
 **3.6.1**
 

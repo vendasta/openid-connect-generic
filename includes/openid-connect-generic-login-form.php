@@ -129,7 +129,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function make_login_button() {
-		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login' ) );
+		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login with Vendasta Credentials' ) );
 		$href = $this->client_wrapper->get_authentication_url();
 
         ob_start();

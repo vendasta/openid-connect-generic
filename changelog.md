@@ -1,5 +1,11 @@
 
 # OpenId Connect Generic Changelog
+**3.6.4**
+
+* Fixed 'No authentication code present in the request.' error from happening
+  after getting a missing state. 
+* Changed error message for 'Missing State" to be more user friendly.
+
 **3.6.3**
 
 * Fixed deep linking after encountering error screen.

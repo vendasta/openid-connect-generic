@@ -76,7 +76,7 @@ class OpenID_Connect_Generic_Login_Form {
 			if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
 				// if using the login form, default redirect to the admin dashboard
 				$redirect_url = admin_url();
-				if ( isset( $_REQUEST['redirect_to'] ) ) {
+				if ( isset( $_REQUEST['redirect_to'] ) && ( strpos($_REQUEST['redirect_to'], 'admin-ajax') === false )) {
 					$redirect_url = esc_url( $_REQUEST[ 'redirect_to' ] );
 				}
 			}

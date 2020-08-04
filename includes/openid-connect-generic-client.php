@@ -80,7 +80,7 @@ class OpenID_Connect_Generic_Client {
 
 		// check the client request state 
 		if ( ! isset( $request['state'] ) || ! $this->check_state( $request['state'] ) ){
-			return new WP_Error( 'missing-state', __( 'Missing state.' ), $request );
+			return new WP_Error( 'missing-state', __( 'Session Expired. Please log in below.' ), $request );
 		}
 
 		return $request;

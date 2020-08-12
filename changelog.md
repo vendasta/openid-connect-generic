@@ -1,5 +1,10 @@
 
 # OpenId Connect Generic Changelog
+**3.6.5**
+
+* Removed redirect to admin dashboard as a default. Should now redirect to
+home page
+
 **3.6.4**
 
 * Fixed 'No authentication code present in the request.' error from happening

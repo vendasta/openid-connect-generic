@@ -12,6 +12,9 @@ class OpenID_Connect_Generic_Login_Form {
 	function __construct( $settings, $client_wrapper ){
 		$this->settings = $settings;
 		$this->client_wrapper = $client_wrapper;
+
+		// maybe set redirect cookie on formular page
+		add_action('login_form_login', [$this, 'handle_redirect_cookie']);
 	}
 
 	/**
@@ -21,7 +24,6 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return \OpenID_Connect_Generic_Login_Form
 	 */
 	static public function register( $settings, $client_wrapper ){
-
 		$login_form = new self( $settings, $client_wrapper );
 
 		// alter the login form as dictated by settings
@@ -29,8 +31,6 @@ class OpenID_Connect_Generic_Login_Form {
 
 		// add a shortcode for the login button
 		add_shortcode( 'openid_connect_generic_login_button', array( $login_form, 'make_login_button' ) );
-
-		$login_form->handle_redirect_cookie();
 
 		$login_form->handle_redirect_login_type_auto();
 
@@ -48,6 +48,7 @@ class OpenID_Connect_Generic_Login_Form {
 			&& ! isset( $_POST['wp-submit'] ) )
 		{
 			if (  ! isset( $_GET['login-error'] ) ) {
+			    $this->handle_redirect_cookie();
 				wp_redirect( $this->client_wrapper->get_authentication_url() );
 				exit;
 			}
@@ -65,6 +66,7 @@ class OpenID_Connect_Generic_Login_Form {
 		if ( $GLOBALS['pagenow'] == 'wp-login.php' && isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] === 'logout' ) {
 			return;
 		}
+
 		// record the URL of this page if set to redirect back to origin page
 		if ( $this->settings->redirect_user_back )
 		{
@@ -74,14 +76,15 @@ class OpenID_Connect_Generic_Login_Form {
 			$redirect_url = home_url( esc_url( add_query_arg( null, null ) ) );
 
 			if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
-				if ( isset( $_REQUEST['redirect_to'] ) && ( strpos($_REQUEST['redirect_to'], 'admin-ajax') === false )) {
-					$redirect_url = esc_url( $_REQUEST[ 'redirect_to' ] );
+
+				if ( isset( $_REQUEST['redirect_to'] ) ) {
+					$redirect_url = esc_url_raw( $_REQUEST[ 'redirect_to' ] );
 				}
 			}
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
-			setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 
+			setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 		}
 	}
 
@@ -124,16 +127,24 @@ class OpenID_Connect_Generic_Login_Form {
 	/**
 	 * Create a login button (link)
 	 *
+	 * @param array $atts Array of optional attributes to override login buton
+	 * functionality when used by shortcode.
+	 *
 	 * @return string
 	 */
-	function make_login_button() {
-		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login with Vendasta Credentials' ) );
-		$href = $this->client_wrapper->get_authentication_url();
+	function make_login_button( $atts = array() ) {
+		$button_text = __( 'Login with OpenID Connect' );
+		if ( ! empty( $atts['button_text'] ) ) {
+			$button_text = $atts['button_text'];
+		}
 
-        ob_start();
+		$text = apply_filters( 'openid-connect-generic-login-button-text', $button_text );
+		$href = $this->client_wrapper->get_authentication_url( $atts );
+
+		ob_start();
 		?>
 		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center;">
-			<a class="button button-large" style="color: #3f9b63; border-color: #3f9b63;" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
+			<a class="button button-large" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
 		</div>
 		<?php
 		return ob_get_clean();

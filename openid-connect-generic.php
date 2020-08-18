@@ -1,18 +1,33 @@
 <?php
-/*
-Plugin Name: Vendasta Fork of OpenID Connect Generic
-Plugin URI: https://github.com/vendasta/openid-connect-generic
-Description:  Connect to an OpenID Connect generic client using Authorization Code Flow
-Version: 3.6.5
-Author: daggerhart
-Author URI: http://www.daggerhart.com
-License: GPLv2 Copyright (c) 2015 daggerhart
-*/
+/**
+ * OpenID Connect Generic Client
+ *
+ * This plugin provides the ability to authenticate users with Identity
+ * Providers using the OpenID Connect OAuth2 API with Authorization Code Flow.
+ *
+ * @category  Authentication
+ * @package   OpenID_Connect_Generic
+ * @author    Jonathan Daggerhart <jonathan@daggerhart.com>
+ * @author    Tim Nolte <tim.nolte@ndigitals.com>
+ * @copyright 2015-2020 daggerhart
+ * @license   http://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
+ * @link      https://github.com/daggerhart
+ *
+ * @wordpress-plugin
+ * Plugin Name:       OpenID Connect Generic
+ * Plugin URI:        https://github.com/daggerhart/openid-connect-generic
+ * Description:       Connect to an OpenID Connect generic client using Authorization Code Flow.
+ * Version:           3.7.1
+ * Author:            daggerhart
+ * Author URI:        http://www.daggerhart.com
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * GitHub Plugin URI: https://github.com/daggerhart/openid-connect-generic
+ */
 
 /*
 Notes
   Spec Doc - http://openid.net/specs/openid-connect-basic-1_0-32.html
-
   Filters
   - openid-connect-generic-alter-request       - 3 args: request array, plugin settings, specific request op
   - openid-connect-generic-settings-fields     - modify the fields provided on the settings page
@@ -23,20 +38,22 @@ Notes
   - openid-connect-generic-auth-url            - modify the authentication url
   - openid-connect-generic-alter-user-claim    - modify the user_claim before a new user is created
   - openid-connect-generic-alter-user-data     - modify user data before a new user is created
-
+  - openid-connect-modify-token-response-before-validation - modify the token response before validation
+  - openid-connect-modify-id-token-claim-before-validation - modify the token claim before validation
   Actions
   - openid-connect-generic-user-create        - 2 args: fires when a new user is created by this plugin
   - openid-connect-generic-user-update        - 1 arg: user ID, fires when user is updated by this plugin
   - openid-connect-generic-update-user-using-current-claim - 2 args: fires every time an existing user logs
   - openid-connect-generic-redirect-user-back - 2 args: $redirect_url, $user. Allows interruption of redirect during login.
   - openid-connect-generic-user-logged-in     - 1 arg: $user, fires when user is logged in.
-
+  - openid-connect-generic-cron-daily         - daily cron action
+  - openid-connect-generic-state-not-found    - the given state does not exist in the database, regardless of its expiration.
+  - openid-connect-generic-state-expired      - the given state exists, but expired before this login attempt.
   User Meta
   - openid-connect-generic-subject-identity    - the identity of the user provided by the idp
   - openid-connect-generic-last-id-token-claim - the user's most recent id_token claim, decoded
   - openid-connect-generic-last-user-claim     - the user's most recent user_claim
   - openid-connect-generic-last-token-response - the user's most recent token response
-
   Options
   - openid_connect_generic_settings     - plugin settings
   - openid-connect-generic-valid-states - locally stored generated states
@@ -45,7 +62,7 @@ Notes
 
 class OpenID_Connect_Generic {
 	// plugin version
-	const VERSION = '3.6.5';
+	const VERSION = '3.7.1';
 
 	// plugin settings
 	private $settings;
@@ -97,7 +114,8 @@ class OpenID_Connect_Generic {
 			$this->settings->endpoint_userinfo,
 			$this->settings->endpoint_token,
 			$redirect_uri,
-			$state_time_limit
+			$state_time_limit,
+			$this->logger
 		);
 
 		$this->client_wrapper = OpenID_Connect_Generic_Client_Wrapper::register( $this->client, $this->settings, $this->logger );
@@ -109,6 +127,9 @@ class OpenID_Connect_Generic {
 
 		// add a shortcode to get the auth url
 		add_shortcode( 'openid_connect_generic_auth_url', array( $this->client_wrapper, 'get_authentication_url' ) );
+
+		// add actions to our scheduled cron jobs
+		add_action( 'openid-connect-generic-cron-daily', [ $this, 'cron_states_garbage_collection'] );
 
 		$this->upgrade();
 
@@ -153,6 +174,7 @@ class OpenID_Connect_Generic {
 
 		if ( version_compare( self::VERSION, $last_version, '>' ) ) {
 			// upgrade required
+			self::setup_cron_jobs();
 
 			// @todo move this to another file for upgrade scripts
 			if ( isset( $settings->ep_login ) ) {
@@ -167,6 +189,45 @@ class OpenID_Connect_Generic {
 			// update the stored version number
 			update_option( 'openid-connect-generic-plugin-version', self::VERSION );
 		}
+	}
+
+	/**
+	 * Expire state transients by attempting to access them and allowing the
+	 * transient's own mechanisms to delete any that have expired.
+	 */
+	function cron_states_garbage_collection() {
+		global $wpdb;
+		$states = $wpdb->get_col( "SELECT `option_name` FROM {$wpdb->options} WHERE `option_name` LIKE '_transient_openid-connect-generic-state--%'" );
+
+		if ( !empty( $states ) ) {
+			foreach ( $states as $state ) {
+			    $transient = str_replace("_transient_", "", $state);
+                get_transient( $transient );
+			}
+		}
+	}
+
+	/**
+	 * Ensure cron jobs are added to the schedule.
+	 */
+	static public function setup_cron_jobs() {
+		if ( ! wp_next_scheduled( 'openid-connect-generic-cron-daily' ) ) {
+			wp_schedule_event( time(), 'daily', 'openid-connect-generic-cron-daily' );
+		}
+	}
+
+	/**
+	 * Activation hook.
+	 */
+	static public function activation() {
+		self::setup_cron_jobs();
+	}
+
+	/**
+	 * Deactivation hook.
+	 */
+	static public function deactivation() {
+		wp_clear_scheduled_hook( 'openid-connect-generic-cron-daily' );
 	}
 
 	/**
@@ -230,7 +291,9 @@ class OpenID_Connect_Generic {
 				// plugin settings
 				'enforce_privacy' => 0,
 				'alternate_redirect_uri' => 0,
+				'token_refresh_enable' => 1,
 				'link_existing_users' => 0,
+				'create_if_does_not_exist' => 1,
 				'redirect_user_back' => 0,
 				'redirect_on_logout' => 1,
 				'enable_logging'  => 0,
@@ -253,3 +316,6 @@ class OpenID_Connect_Generic {
 }
 
 OpenID_Connect_Generic::bootstrap();
+
+register_activation_hook( __FILE__, [ 'OpenID_Connect_Generic', 'activation' ] );
+register_deactivation_hook( __FILE__, [ 'OpenID_Connect_Generic', 'deactivation' ] );

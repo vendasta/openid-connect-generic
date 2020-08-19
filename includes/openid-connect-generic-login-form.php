@@ -133,7 +133,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 * @return string
 	 */
 	function make_login_button( $atts = array() ) {
-		$button_text = __( 'Login with OpenID Connect' );
+		$button_text = __( 'Login with Vendasta Credentials' );
 		if ( ! empty( $atts['button_text'] ) ) {
 			$button_text = $atts['button_text'];
 		}
@@ -144,7 +144,7 @@ class OpenID_Connect_Generic_Login_Form {
 		ob_start();
 		?>
 		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center;">
-			<a class="button button-large" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
+			<a class="button button-large" style="color: #3f9b63; border-color: #3f9b63;" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
 		</div>
 		<?php
 		return ob_get_clean();

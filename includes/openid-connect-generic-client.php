@@ -94,7 +94,7 @@ class OpenID_Connect_Generic_Client {
 		// check the client request state
 		if( ! isset( $request['state']) ) {
 			do_action( 'openid-connect-generic-no-state-provided' );
-			return new WP_Error( 'missing-state', __( 'Missing state.' ), $request );
+			return new WP_Error( 'missing-state', __( 'Session Expired. Please log in below.' ), $request );
 		}
 
 		if ( ! $this->check_state( $request['state'] ) ) {

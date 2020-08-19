@@ -167,6 +167,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			$this->error_redirect( $token_response );
 		}
 
+        $this->save_user_meta($user_id, $token_response, null, null);
 		$this->save_refresh_token( $manager, $token, $token_response );
 	}
 
@@ -178,12 +179,14 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	 */
 	function error_redirect( $error ) {
 		$this->logger->log( $error );
+		$current_url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 		// redirect user back to login page
 		wp_redirect(
 			wp_login_url() .
 			'?login-error=' . $error->get_error_code() .
-		    '&message=' . urlencode( $error->get_error_message() )
+		    '&message=' . urlencode( $error->get_error_message() ) .
+		    '&redirect_to=' . urlencode($current_url)
 		);
 		exit;
 	}
@@ -436,6 +439,23 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	}
 
 	/**
+         * @param $id
+         * @param $token_response
+         * @param $id_token_claim
+         * @param $user_claim
+         */
+    	function save_user_meta($id, $token_response, $id_token_claim, $user_claim){
+            update_user_meta( $id, 'openid-connect-generic-last-token-response', $token_response );
+            // TODO: should always update these, but all we need right now is the response.
+            if (isset($id_token_claim)) {
+                update_user_meta($id, 'openid-connect-generic-last-id-token-claim', $id_token_claim);
+            }
+            if (isset($user_claim)) {
+                update_user_meta($id, 'openid-connect-generic-last-user-claim', $user_claim);
+            }
+        }
+
+	/**
 	 * Record user meta data, and provide an authorization cookie
 	 *
 	 * @param $user
@@ -443,9 +463,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	function login_user( $user, $token_response, $id_token_claim, $user_claim, $subject_identity ){
 		// hey, we made it!
 		// let's remember the tokens for future reference
-		update_user_meta( $user->ID, 'openid-connect-generic-last-token-response', $token_response );
-		update_user_meta( $user->ID, 'openid-connect-generic-last-id-token-claim', $id_token_claim );
-		update_user_meta( $user->ID, 'openid-connect-generic-last-user-claim', $user_claim );
+		$this->save_user_meta($user->ID, $token_response, $id_token_claim, $user_claim);
 
 		// Create the WP session, so we know its token
 		$expiration = time() + apply_filters( 'auth_cookie_expiration', 2 * DAY_IN_SECONDS, $user->ID, false );

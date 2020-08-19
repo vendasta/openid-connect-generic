@@ -492,7 +492,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		$session = $manager->get($token);
 		$now = current_time( 'timestamp' , true );
 		$session[$this->cookie_token_refresh_key] = array(
-			'next_access_token_refresh_time' => $now + 25,
+			'next_access_token_refresh_time' => $token_response['expires_in'] + $now,
 			'refresh_token' => isset( $token_response[ 'refresh_token' ] ) ? $token_response[ 'refresh_token' ] : false,
 			'refresh_expires' => false,
 		);

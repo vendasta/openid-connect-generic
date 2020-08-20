@@ -129,6 +129,7 @@ class OpenID_Connect_Generic_Login_Form {
 	 *
 	 * @param array $atts Array of optional attributes to override login buton
 	 * functionality when used by shortcode.
+	 *  Vendasta update: Updated text and styling of login button.
 	 *
 	 * @return string
 	 */

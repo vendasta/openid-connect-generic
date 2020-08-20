@@ -167,6 +167,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 			$this->error_redirect( $token_response );
 		}
 
+        /** Vendasta update: save user meta data */
         $this->save_user_meta($user_id, $token_response, null, null);
 		$this->save_refresh_token( $manager, $token, $token_response );
 	}
@@ -175,9 +176,11 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	 * Handle errors by redirecting the user to the login form
 	 *  along with an error code
 	 *
+	 * Vendasta update: Added redirect_to param, so user could still be redirected after seeing the error page
 	 * @param $error WP_Error
 	 */
 	function error_redirect( $error ) {
+
 		$this->logger->log( $error );
 		$current_url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
@@ -439,21 +442,22 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	}
 
 	/**
-         * @param $id
-         * @param $token_response
-         * @param $id_token_claim
-         * @param $user_claim
-         */
-    	function save_user_meta($id, $token_response, $id_token_claim, $user_claim){
-            update_user_meta( $id, 'openid-connect-generic-last-token-response', $token_response );
-            // TODO: should always update these, but all we need right now is the response.
-            if (isset($id_token_claim)) {
-                update_user_meta($id, 'openid-connect-generic-last-id-token-claim', $id_token_claim);
-            }
-            if (isset($user_claim)) {
-                update_user_meta($id, 'openid-connect-generic-last-user-claim', $user_claim);
-            }
+	 * Vendata update: Added method. Saving user meta data can be called from multiple places.
+     * @param $id
+     * @param $token_response
+     * @param $id_token_claim
+     * @param $user_claim
+     */
+    function save_user_meta($id, $token_response, $id_token_claim, $user_claim){
+        update_user_meta( $id, 'openid-connect-generic-last-token-response', $token_response );
+        // TODO: should always update these, but all we need right now is the response.
+        if (isset($id_token_claim)) {
+            update_user_meta($id, 'openid-connect-generic-last-id-token-claim', $id_token_claim);
         }
+        if (isset($user_claim)) {
+            update_user_meta($id, 'openid-connect-generic-last-user-claim', $user_claim);
+        }
+    }
 
 	/**
 	 * Record user meta data, and provide an authorization cookie
@@ -567,6 +571,7 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		if ( empty( $transliterated_username ) ) {
 			return new WP_Error( 'username-transliteration-failed', __( "Username $desired_username could not be transliterated" ), $desired_username );
 		}
+		/** Vendasta update: Limited the amount of normalization, so the user names would match with users prior to this plugin. */
         $normalized_username = strtolower($transliterated_username);
 
 		// copy the username for incrementing

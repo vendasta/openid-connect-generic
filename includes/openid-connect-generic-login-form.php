@@ -75,12 +75,12 @@ class OpenID_Connect_Generic_Login_Form {
 			// default redirect to the homepage
 			$redirect_url = home_url( esc_url( add_query_arg( null, null ) ) );
 
-			if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
+		    if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
 
-				// Vendasta -- don't save authentication URL to redirect cookie.
+			    // Vendasta -- don't save authentication URL to redirect cookie.
                 if ( isset( $_REQUEST['redirect_to'] ) && ( strpos($_REQUEST['redirect_to'], 'admin-ajax') === false )) {
-					$redirect_url = esc_url_raw( $_REQUEST[ 'redirect_to' ] );
-				}
+	                $redirect_url = esc_url_raw( $_REQUEST[ 'redirect_to' ] );
+                }
 			}
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );

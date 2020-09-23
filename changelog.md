@@ -1,5 +1,9 @@
 
 # OpenId Connect Generic Changelog
+**3.7.2**
+
+* Fix: Authentication URL was being called twice on initial page load causing error.
+
 **3.7.1**
 
 * Fix: Release Version Number.

@@ -17,7 +17,7 @@
  * Plugin Name:       Vendasta Fork of OpenID Connect Generic
  * Plugin URI:        https://github.com/daggerhart/openid-connect-generic
  * Description:       Connect to an OpenID Connect generic client using Authorization Code Flow.
- * Version:           3.7.2
+ * Version:           3.7.3
  * Author:            daggerhart
  * Author URI:        http://www.daggerhart.com
  * License:           GPL-2.0+
@@ -62,7 +62,7 @@ Notes
 
 class OpenID_Connect_Generic {
 	// plugin version
-	const VERSION = '3.7.2';
+	const VERSION = '3.7.3';
 
 	// plugin settings
 	private $settings;

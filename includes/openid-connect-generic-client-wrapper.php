@@ -69,9 +69,9 @@ class OpenID_Connect_Generic_Client_Wrapper {
 		}
 
 		// verify token for any logged in user
-		if ( is_user_logged_in() ) {
+		/*if ( is_user_logged_in() ) {
 			add_action( 'wp_loaded', array($client_wrapper, 'ensure_tokens_still_fresh'));
-		}
+		}*/
 		
 		return $client_wrapper;
 	}
@@ -430,20 +430,20 @@ class OpenID_Connect_Generic_Client_Wrapper {
 	function login_user( $user, $token_response, $id_token_claim, $user_claim, $subject_identity ){
 		// hey, we made it!
 		// let's remember the tokens for future reference
-		update_user_meta( $user->ID, 'openid-connect-generic-last-token-response', $token_response );
-		update_user_meta( $user->ID, 'openid-connect-generic-last-id-token-claim', $id_token_claim );
+		//update_user_meta( $user->ID, 'openid-connect-generic-last-token-response', $token_response );
+		//update_user_meta( $user->ID, 'openid-connect-generic-last-id-token-claim', $id_token_claim );
 		update_user_meta( $user->ID, 'openid-connect-generic-last-user-claim', $user_claim );
 
 		// Create the WP session, so we know its token
 		$expiration = time() + apply_filters( 'auth_cookie_expiration', 2 * DAY_IN_SECONDS, $user->ID, false );
 		$manager = WP_Session_Tokens::get_instance( $user->ID );
-		$token = $manager->create( $expiration );
+		//$token = $manager->create( $expiration );
 
 		// Save the refresh token in the session
-		$this->save_refresh_token( $manager, $token, $token_response );
+		//$this->save_refresh_token( $manager, $token, $token_response );
 
 		// you did great, have a cookie!
-		wp_set_auth_cookie( $user->ID, false, '', $token);
+	    wp_set_auth_cookie( $user->ID, false/*, '', $token*/);
 		do_action( 'wp_login', $user->user_login, $user );
 	}
 

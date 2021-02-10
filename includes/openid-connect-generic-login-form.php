@@ -75,17 +75,15 @@ class OpenID_Connect_Generic_Login_Form {
 			// default redirect to the homepage
 			$redirect_url = home_url( esc_url( add_query_arg( null, null ) ) );
 
-			if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
-				// if using the login form, default redirect to the admin dashboard
-				$redirect_url = admin_url();
+            if ( $GLOBALS['pagenow'] == 'wp-login.php' ) {
 
-				if ( isset( $_REQUEST['redirect_to'] ) ) {
-					$redirect_url = esc_url_raw( $_REQUEST[ 'redirect_to' ] );
-				}
-			}
+                // Vendasta -- don't save authentication URL to redirect cookie.
+                if ( isset( $_REQUEST['redirect_to'] ) && ( strpos($_REQUEST['redirect_to'], 'admin-ajax') === false )) {
+                    $redirect_url = esc_url_raw( $_REQUEST[ 'redirect_to' ] );
+                }
+            }
 
 			$redirect_url = apply_filters( 'openid-connect-generic-cookie-redirect-url', $redirect_url );
-
 			setcookie( $this->client_wrapper->cookie_redirect_key, $redirect_url, $redirect_expiry, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 		}
 	}
@@ -129,16 +127,25 @@ class OpenID_Connect_Generic_Login_Form {
 	/**
 	 * Create a login button (link)
 	 *
+	 * @param array $atts Array of optional attributes to override login buton
+	 * functionality when used by shortcode.
+	 *  Vendasta update: Updated text and styling of login button.
+	 *
 	 * @return string
 	 */
-	function make_login_button() {
-		$text = apply_filters( 'openid-connect-generic-login-button-text', __( 'Login with OpenID Connect' ) );
-		$href = $this->client_wrapper->get_authentication_url();
+	function make_login_button( $atts = array() ) {
+		$button_text = __( 'Login with Vendasta Credentials' );
+		if ( ! empty( $atts['button_text'] ) ) {
+			$button_text = $atts['button_text'];
+		}
+
+		$text = apply_filters( 'openid-connect-generic-login-button-text', $button_text );
+		$href = $this->client_wrapper->get_authentication_url( $atts );
 
 		ob_start();
 		?>
 		<div class="openid-connect-login-button" style="margin: 1em 0; text-align: center;">
-			<a class="button button-large" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
+			<a class="button button-large" style="color: #3f9b63; border-color: #3f9b63;" href="<?php print esc_url( $href ); ?>"><?php print $text; ?></a>
 		</div>
 		<?php
 		return ob_get_clean();
